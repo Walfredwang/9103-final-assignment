@@ -72,48 +72,27 @@ function drawCircle(x, y, index) {
   } else {
     // Draw dashed circle
     for (let i = 0; i < 4; i++) {
-      stroke(colors[index * 10 + 10]);
-      dashedCircle(75 + i * (radius - 180) / 5, 2, 4);
+      fill(colors[index * 10 + 10]); 
+      dashedCircle(75 + i * (radius - 180) / 5, 10, 20);
     }
   }
   // Draw the stamen in the middle of every two circles
   if (index % 2 === 0) {
     rotate(Math.PI * 2 / 30 * index);
-    drawPetal(150)
   }
   pop()
 }
 
-/*
-* Draw dashed circle
-* radius: radius size of a circle
-* dashWidth: dash width size
-* dashSpacing: spacing between dashed line segments
-*/
-function dashedCircle(radius, dashWidth, dashSpacing) {
-  // 200 dashed line segments
-  let steps = 200;
-  let dashPeriod = dashWidth + dashSpacing;
-  let lastDashed = false;
-  // Draw all segments
-  for(let i = 0; i < steps; i++) {
-    // Decide whether to beginShape or endShape
-    let curDashed = (i % dashPeriod) < dashWidth;
-    if(curDashed && !lastDashed) {
-      beginShape();
-    }
-    if(!curDashed && lastDashed) {
-      endShape();
-    }
-    // Draw vertex by calculate result
-    if(curDashed) {
-      let theta = map(i, 0, steps, 0, TWO_PI);
-      vertex(cos(theta) * radius, sin(theta) * radius);
-    }
-    lastDashed = curDashed;
-  }
-  if(lastDashed) {
-    endShape();
+function dashedCircle(radius, dotDiameter, dotSpacing) {
+  let steps = floor(TWO_PI * radius / dotSpacing);
+
+  for (let i = 0; i < steps; i++) {
+    let theta = map(i, 0, steps, 0, TWO_PI);
+    let x = cos(theta) * radius;
+    let y = sin(theta) * radius;
+    fill(contrastColors);
+    noStroke();
+    ellipse(x, y, dotDiameter);
   }
 }
 
