@@ -7,6 +7,9 @@ let contrastColors = [];
 let size = 1000;
 let radius = size * 0.27;
 
+let originalCoordinates = [];
+let ellipseOffsets = [];
+
 function setup() {
   // Create a canvas with a specified size of 1000x1000
   createCanvas(size, size);
@@ -22,13 +25,16 @@ function setup() {
   }
   //Generates a set of coordinates for the circle
   for (let i = 0; i < 6; i++) {
-    //When even numbers are 0, odd numbers are radius / 2. Make a staggered effect.
     let diff = i % 2 === 0 ? 0 : radius / 2;
     for (let j = 0; j < 6; j++) {
-      //Enter the coordinates of the circle for the loop effect in the coordinate array
       coordinates.push([radius * j + j * 20 + diff, radius * i - i * 10])
     }
   }
+  originalCoordinates = coordinates.map(coord => [...coord]);
+
+  for (let i = 0; i < coordinates.length; i++) {
+    ellipseOffsets.push([0, 0]);
+}
 }
 
 function draw() {
@@ -39,8 +45,16 @@ function draw() {
   background(colors)
   // Draw all circle based on coordinates
   for (let i = 0; i < coordinates.length; i++) {
-    drawCircle(coordinates[i][0], coordinates[i][1], i);
-  }
+    if (dist(mouseX, mouseY, coordinates[i][0], coordinates[i][1]) < radius) {
+        let angle = atan2(coordinates[i][1] - mouseY, coordinates[i][0] - mouseX); // 计算鼠标和椭圆之间的角度
+        ellipseOffsets[i][0] += cos(angle) * 5;  // 使用cos和sin函数沿该角度移动椭圆
+        ellipseOffsets[i][1] += sin(angle) * 5;
+    } else {
+        ellipseOffsets[i][0] = lerp(ellipseOffsets[i][0], 0, 0.05); // 平滑地将椭圆返回到其原始位置
+        ellipseOffsets[i][1] = lerp(ellipseOffsets[i][1], 0, 0.05);
+    }
+    drawCircle(coordinates[i][0] + ellipseOffsets[i][0], coordinates[i][1] + ellipseOffsets[i][1], i);
+}
 }
 
 /*
