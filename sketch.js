@@ -9,10 +9,30 @@ let radius = size * 0.27;
 
 let originalCoordinates = [];
 let ellipseOffsets = [];
+let isMousePressed = false;
+
+
+let spreading = false;
+// viriables that contol the spread speed
+let spreadSpeed = 1; 
+// spread angle
+let spreadAngle = 0; 
+let spreadRadius = 0; 
+let spreadDiameter = 4; 
+let spreadMaxRadius = 200; 
+let spreadExpansionRate = 2; 
+
+
+function mousePressed() {
+  isMousePressed = true;
+}
+
+function mouseReleased() {
+  isMousePressed = false;
+}
 
 function setup() {
 
-  
   // Create a canvas with a specified size of 1000x1000
   createCanvas(size, size);
   for (let i = 0; i < 500; i++) {
@@ -46,7 +66,9 @@ function draw() {
   // Set the background color to a dark blue
   background(contrastColors)
 
-  
+  if (isMousePressed) {
+    spreadAngle += spreadSpeed; // increase the spread angle to spread
+  }
     // caculate the postion of the mouse on the canvas
     const canvasMouseX = mouseX + 350;
     const canvasMouseY = mouseY + 100;
@@ -63,6 +85,16 @@ function draw() {
       }
       drawCircle(coordinates[i][0] + ellipseOffsets[i][0], coordinates[i][1] + ellipseOffsets[i][1], i);
     }
+
+      
+  if (spreading) {
+    spreadAngle += spreadSpeed; 
+    spreadRadius += spreadExpansionRate; 
+    if (spreadRadius > spreadMaxRadius) {
+      spreading = false; 
+    }
+    dashedCircle(spreadRadius, spreadDiameter, spreadDiameter * 2);
+  }
 }
 
 /*
@@ -107,15 +139,17 @@ function drawCircle(x, y, index) {
 
 function dashedCircle(radius, dotDiameter, dotSpacing) {
   let steps = floor(TWO_PI * radius / dotSpacing);
-
+  push(); 
+  rotate(spreadAngle); 
   for (let i = 0; i < steps; i++) {
     let theta = map(i, 0, steps, 0, TWO_PI);
     let x = cos(theta) * radius;
     let y = sin(theta) * radius;
-    fill(contrastColors);
+    fill(0);
     noStroke();
-    ellipse(x, y, dotDiameter);
+    circle(x, y, dotDiameter);
   }
+  pop(); 
 }
 
 /*
