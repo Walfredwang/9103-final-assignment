@@ -11,6 +11,8 @@ let originalCoordinates = [];
 let ellipseOffsets = [];
 
 function setup() {
+
+  
   // Create a canvas with a specified size of 1000x1000
   createCanvas(size, size);
   for (let i = 0; i < 500; i++) {
@@ -42,19 +44,25 @@ function draw() {
   rotate(-PI / 11);
   translate(-350, -100);
   // Set the background color to a dark blue
-  background(colors)
-  // Draw all circle based on coordinates
-  for (let i = 0; i < coordinates.length; i++) {
-    if (dist(mouseX, mouseY, coordinates[i][0], coordinates[i][1]) < radius) {
-        let angle = atan2(coordinates[i][1] - mouseY, coordinates[i][0] - mouseX); // 计算鼠标和椭圆之间的角度
-        ellipseOffsets[i][0] += cos(angle) * 5;  // 使用cos和sin函数沿该角度移动椭圆
+  background(contrastColors)
+
+  
+    // caculate the postion of the mouse on the canvas
+    const canvasMouseX = mouseX + 350;
+    const canvasMouseY = mouseY + 100;
+  
+    for (let i = 0; i < coordinates.length; i++) {
+      // check the postion of the mouse from the canvas
+      if (dist(canvasMouseX, canvasMouseY, coordinates[i][0], coordinates[i][1]) < radius) {
+        let angle = atan2(coordinates[i][1] - canvasMouseY, coordinates[i][0] - canvasMouseX); 
+        ellipseOffsets[i][0] += cos(angle) * 5;  
         ellipseOffsets[i][1] += sin(angle) * 5;
-    } else {
-        ellipseOffsets[i][0] = lerp(ellipseOffsets[i][0], 0, 0.05); // 平滑地将椭圆返回到其原始位置
+      } else {
+        ellipseOffsets[i][0] = lerp(ellipseOffsets[i][0], 0, 0.05); 
         ellipseOffsets[i][1] = lerp(ellipseOffsets[i][1], 0, 0.05);
+      }
+      drawCircle(coordinates[i][0] + ellipseOffsets[i][0], coordinates[i][1] + ellipseOffsets[i][1], i);
     }
-    drawCircle(coordinates[i][0] + ellipseOffsets[i][0], coordinates[i][1] + ellipseOffsets[i][1], i);
-}
 }
 
 /*
