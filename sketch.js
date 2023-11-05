@@ -2,6 +2,7 @@
 let colors = [];
 let deviations = [];
 let coordinates = [];
+let contrastColors = [];
 // canvas size
 let size = 1000;
 let radius = size * 0.27;
@@ -9,15 +10,15 @@ let radius = size * 0.27;
 function setup() {
   // Create a canvas with a specified size of 1000x1000
   createCanvas(size, size);
-  // Generate random color array of size 500
   for (let i = 0; i < 500; i++) {
-    let r = random(0, 255);
-    let g = random(0, 255);
-    let b = random(0, 255);
-    //Enter random rgb values into the color array
-    colors.push([r,g,b]);
-    //Enter random rgb values into the deviations array
-    deviations.push(random(-6, 6))
+    // generate a number from range 0 t0 232
+    let gray = Math.floor(Math.random() * 233);
+  
+    // all the channel use the same grey value
+    colors.push([gray, gray, gray]);
+    let contrastColor = gray > 127 ? [0, 0, 0] : [255, 255, 255];
+    contrastColors.push(contrastColor);
+    deviations.push(Math.floor(Math.random() * 13) - 6);
   }
   //Generates a set of coordinates for the circle
   for (let i = 0; i < 6; i++) {
@@ -35,7 +36,7 @@ function draw() {
   rotate(-PI / 11);
   translate(-350, -100);
   // Set the background color to a dark blue
-  background(3, 79, 120)
+  background(colors)
   // Draw all circle based on coordinates
   for (let i = 0; i < coordinates.length; i++) {
     drawCircle(coordinates[i][0], coordinates[i][1], i);
@@ -158,3 +159,4 @@ function drawPetal(currentRadius) {
   stroke(236, 65, 87);
   bezier(0, 0, -currentRadius / ratio, currentRadius, currentRadius / ratio, currentRadius, currentRadius / ratio, currentRadius);
 } 
+
