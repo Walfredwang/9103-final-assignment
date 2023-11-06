@@ -22,6 +22,8 @@ let spreadDiameter = 4;
 let spreadMaxRadius = 200; 
 let spreadExpansionRate = 2; 
 
+let gradientMode = false;
+let gradientColors = [];
 
 function mousePressed() {
   isMousePressed = true;
@@ -30,11 +32,35 @@ function mousePressed() {
 function mouseReleased() {
   isMousePressed = false;
 }
+//Creates an array of colours that fade from a start colour to an end colour:
+function generateGradient(startColor, endColor, steps) {
+  let gradient = [];
+  for (let i = 0; i < steps; i++) {
+    let r = lerp(startColor[0], endColor[0], i / steps);
+    let g = lerp(startColor[1], endColor[1], i / steps);
+    let b = lerp(startColor[2], endColor[2], i / steps);
+    gradient.push([r, g, b]);
+  }
+  return gradient;
+}
+function keyPressed() {
+  if (keyCode === 32) { // 32 is the ASCII code of space
+    gradientMode = !gradientMode;
+    if (gradientMode) {
+      //start and end color
+      let startColor = [255, 0, 0]; // red
+      let endColor = [0, 0, 255]; // blue
+      // create gradientcolor array
+      gradientColors = generateGradient(startColor, endColor, coordinates.length);
+    }
+  }
+}
 
 function setup() {
 
   // Create a canvas with a specified size of 1000x1000
   createCanvas(size, size);
+  loop();
   for (let i = 0; i < 500; i++) {
     // generate a number from range 0 t0 232
     let gray = Math.floor(Math.random() * 233);
@@ -95,6 +121,9 @@ function draw() {
     }
     dashedCircle(spreadRadius, spreadDiameter, spreadDiameter * 2);
   }
+  if (gradientMode) {
+    redraw(); 
+  }
 }
 
 /*
@@ -105,12 +134,21 @@ function draw() {
 */
 function drawCircle(x, y, index) {
   push()
-  // background circle
-  stroke(0, 0, 0, 0)
-  fill(colors[index * 10]);
-  circle(x, y, radius);
+ // choose color mode
+ let fillColor;
+ if (gradientMode) {
+   // gradient
+   fillColor = gradientColors[index];
+ } else {
+   // grey
+   fillColor = colors[index * 10];
+ }
+ 
+ stroke(0, 0, 0, 0);
+ fill(fillColor);
+ circle(x, y, radius);
   // center circle
-  fill(colors[index * 10 + 1]);
+  fill(fillColor);
   circle(x, y, 20);
   // outer rings
   for (let i = 0; i < 8; i++) {
