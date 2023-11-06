@@ -25,6 +25,9 @@ let spreadExpansionRate = 2;
 let gradientMode = false;
 let gradientColors = [];
 
+
+
+
 function mousePressed() {
   isMousePressed = true;
 }
@@ -43,6 +46,8 @@ function generateGradient(startColor, endColor, steps) {
   }
   return gradient;
 }
+
+
 function keyPressed() {
   if (keyCode === 32) { // 32 is the ASCII code of space
     gradientMode = !gradientMode;
@@ -98,6 +103,7 @@ function draw() {
     // caculate the postion of the mouse on the canvas
     const canvasMouseX = mouseX + 350;
     const canvasMouseY = mouseY + 100;
+      // Update gradient colors if gradient mode is active
   
     for (let i = 0; i < coordinates.length; i++) {
       // check the postion of the mouse from the canvas
@@ -111,8 +117,10 @@ function draw() {
       }
       drawCircle(coordinates[i][0] + ellipseOffsets[i][0], coordinates[i][1] + ellipseOffsets[i][1], i);
     }
-
-      
+  
+    for (let i = 0; i < coordinates.length; i++) {
+      drawCircle(coordinates[i][0] + ellipseOffsets[i][0], coordinates[i][1] + ellipseOffsets[i][1], i);
+    }
   if (spreading) {
     spreadAngle += spreadSpeed; 
     spreadRadius += spreadExpansionRate; 
@@ -121,9 +129,7 @@ function draw() {
     }
     dashedCircle(spreadRadius, spreadDiameter, spreadDiameter * 2);
   }
-  if (gradientMode) {
-    redraw(); 
-  }
+  
 }
 
 /*
@@ -135,7 +141,7 @@ function draw() {
 function drawCircle(x, y, index) {
   push()
  // choose color mode
- let fillColor;
+
  if (gradientMode) {
    // gradient
    fillColor = gradientColors[index];
@@ -232,4 +238,11 @@ function drawPetal(currentRadius) {
   stroke(236, 65, 87);
   bezier(0, 0, -currentRadius / ratio, currentRadius, currentRadius / ratio, currentRadius, currentRadius / ratio, currentRadius);
 } 
+
+function lerpColorArr(color1, color2, factor) {
+  let r = lerp(color1[0], color2[0], factor);
+  let g = lerp(color1[1], color2[1], factor);
+  let b = lerp(color1[2], color2[2], factor);
+  return [r, g, b];
+}
 
